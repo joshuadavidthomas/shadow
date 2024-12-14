@@ -5,8 +5,8 @@ A CLI tool to manage your shell aliases through symlinks.
 ## Requirements
 
 - Rust toolchain
-    - The latest is recommended, but any recent version should hopefully work
-- It's to be platform-agnostic and should work on all major operating systems (Linux, macOS, Windows).
+  - The latest is recommended, but any recent version should hopefully work
+- Written with cross-platform compatibility in mind, aiming to support all major operating systems (Linux, macOS, Windows).
 
 ## Installation
 
