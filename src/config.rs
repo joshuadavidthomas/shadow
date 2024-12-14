@@ -5,6 +5,8 @@ use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Config {
+    #[serde(default = "Config::current_version")]
+    version: u32,
     #[serde(default)]
     settings: Settings,
     #[serde(default)]
@@ -13,8 +15,15 @@ pub struct Config {
 }
 
 impl Config {
+    const CURRENT_VERSION: u32 = 1;
+
+    fn current_version() -> u32 {
+        Self::CURRENT_VERSION
+    }
+
     pub fn new() -> Result<Self> {
         let config = Config {
+            version: Self::CURRENT_VERSION,
             settings: Settings::default(),
             aliases: Aliases::default(),
         };
@@ -25,9 +34,22 @@ impl Config {
     pub fn load() -> Result<Self> {
         if Self::config_path().exists() {
             let contents = std::fs::read_to_string(Self::config_path())?;
-            toml::from_str(&contents).map_err(|e| ShadowError::ConfigError(e.to_string()))
+            let mut config: Config =
+                toml::from_str(&contents).map_err(|e| ShadowError::ConfigError(e.to_string()))?;
+
+            if config.version < Self::CURRENT_VERSION {
+                config = config.migrate()?;
+            }
+
+            Ok(config)
         } else {
             Self::new()
+        }
+    }
+
+    fn migrate(self) -> Result<Self> {
+        match self.version {
+            _ => Ok(self),
         }
     }
 
@@ -49,24 +71,25 @@ impl Config {
         &self.settings
     }
 
-    pub fn shadows(&self) -> &Aliases {
+    pub fn aliases(&self) -> &Aliases {
         &self.aliases
     }
 
-    pub fn add(&mut self, shadow: Alias) -> Result<()> {
-        self.aliases.push(shadow);
+    pub fn add(&mut self, alias: Alias) -> Result<()> {
+        let name = alias.name();
+        if self.aliases.contains(name) {
+            return Err(ShadowError::AliasExists(name.to_string()));
+        }
+        self.aliases.insert(name.to_string(), alias);
         self.save()?;
         Ok(())
     }
 
-    pub fn remove(&mut self, original: &str) -> Result<()> {
-        let position = self
-            .aliases
-            .iter()
-            .position(|shadow| shadow.original() == original)
-            .ok_or_else(|| ShadowError::AliasNotFound(original.to_string()))?;
-
-        self.aliases.remove(position);
+    pub fn remove(&mut self, name: &str) -> Result<()> {
+        if !self.aliases.contains(name) {
+            return Err(ShadowError::AliasNotFound(name.to_string()));
+        }
+        self.aliases.remove(name);
         self.save()?;
         Ok(())
     }
