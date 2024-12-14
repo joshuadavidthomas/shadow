@@ -44,17 +44,6 @@ impl Add {
             return ExitCode::DuplicateCommand;
         }
 
-        let command = &self
-            .original
-            .split_whitespace()
-            .next()
-            .expect("command should be provided");
-
-        if Command::new(command).output().is_err() {
-            eprintln!("Command not found: {}", self.original);
-            return ExitCode::CommandFailed;
-        }
-
         let bin_path = match &self.bin_path {
             Some(p) if p == config.settings().bin_path() => None,
             Some(p) => Some(p.clone()),
