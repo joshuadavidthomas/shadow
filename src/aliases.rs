@@ -10,14 +10,14 @@ use std::path::PathBuf;
 use std::process::Command;
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
-pub struct Shadows(Vec<Shadow>);
+pub struct Aliases(Vec<Alias>);
 
-impl Shadows {
-    pub fn find<S: AsRef<str>>(&self, original: S) -> Result<&Shadow> {
+impl Aliases {
+    pub fn find<S: AsRef<str>>(&self, original: S) -> Result<&Alias> {
         self.0
             .iter()
             .find(|s| s.original == original.as_ref())
-            .ok_or_else(|| ShadowError::ShadowNotFound(original.as_ref().to_string()))
+            .ok_or_else(|| ShadowError::AliasNotFound(original.as_ref().to_string()))
     }
 
     pub fn contains<S: AsRef<str>>(&self, original: S) -> bool {
@@ -29,22 +29,22 @@ impl Shadows {
     }
 }
 
-impl Deref for Shadows {
-    type Target = Vec<Shadow>;
+impl Deref for Aliases {
+    type Target = Vec<Alias>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl DerefMut for Shadows {
+impl DerefMut for Aliases {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl IntoIterator for Shadows {
-    type Item = Shadow;
+impl IntoIterator for Aliases {
+    type Item = Alias;
     type IntoIter = std::vec::IntoIter<Self::Item>;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -52,9 +52,9 @@ impl IntoIterator for Shadows {
     }
 }
 
-impl<'a> IntoIterator for &'a Shadows {
-    type Item = &'a Shadow;
-    type IntoIter = std::slice::Iter<'a, Shadow>;
+impl<'a> IntoIterator for &'a Aliases {
+    type Item = &'a Alias;
+    type IntoIter = std::slice::Iter<'a, Alias>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.iter()
@@ -62,14 +62,14 @@ impl<'a> IntoIterator for &'a Shadows {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct Shadow {
+pub struct Alias {
     original: String,
     replacement: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     bin_path: Option<PathBuf>,
 }
 
-impl Shadow {
+impl Alias {
     pub fn new(original: String, replacement: String, bin_path: Option<PathBuf>) -> Self {
         Self {
             original,
@@ -146,7 +146,7 @@ impl Shadow {
         if raw {
             self.execute_original(args)
         } else {
-            self.execute_shadow(args)
+            self.execute_alias(args)
         }
     }
 
@@ -164,7 +164,7 @@ impl Shadow {
         }
     }
 
-    fn execute_shadow(&self, args: &[String]) -> ExitCode {
+    fn execute_alias(&self, args: &[String]) -> ExitCode {
         let parts: Vec<&str> = self.replacement.split_whitespace().collect();
         let (cmd, base_args) = match parts.split_first() {
             Some(parts) => parts,
@@ -194,7 +194,7 @@ impl Shadow {
     }
 }
 
-impl fmt::Display for Shadow {
+impl fmt::Display for Alias {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{} → {}", self.original, self.replacement)?;
         if let Some(path) = &self.bin_path {

@@ -1,8 +1,8 @@
+mod aliases;
 mod cli;
 mod commands;
 mod config;
 mod error;
-mod shadows;
 
 use crate::cli::Cli;
 use crate::config::Config;

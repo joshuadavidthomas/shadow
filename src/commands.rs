@@ -1,6 +1,6 @@
+use crate::aliases::Alias;
 use crate::config::Config;
 use crate::error::ExitCode;
-use crate::shadows::Shadow;
 use clap::Parser;
 use clap::Subcommand;
 use std::path::PathBuf;
@@ -49,7 +49,7 @@ impl Add {
             None => None,
         };
 
-        let shadow = Shadow::new(self.original.clone(), self.replacement.clone(), bin_path);
+        let shadow = Alias::new(self.original.clone(), self.replacement.clone(), bin_path);
 
         if let Err(e) = shadow.create_symlink(config.settings()) {
             eprintln!("{}", e);

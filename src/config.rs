@@ -1,5 +1,5 @@
+use crate::aliases::{Alias, Aliases};
 use crate::error::{Result, ShadowError};
-use crate::shadows::{Shadow, Shadows};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -8,15 +8,15 @@ pub struct Config {
     #[serde(default)]
     settings: Settings,
     #[serde(default)]
-    #[serde(skip_serializing_if = "Shadows::is_empty")]
-    shadows: Shadows,
+    #[serde(skip_serializing_if = "Aliases::is_empty")]
+    aliases: Aliases,
 }
 
 impl Config {
     pub fn new() -> Result<Self> {
         let config = Config {
             settings: Settings::default(),
-            shadows: Shadows::default(),
+            aliases: Aliases::default(),
         };
         config.save()?;
         Ok(config)
@@ -49,24 +49,24 @@ impl Config {
         &self.settings
     }
 
-    pub fn shadows(&self) -> &Shadows {
-        &self.shadows
+    pub fn shadows(&self) -> &Aliases {
+        &self.aliases
     }
 
-    pub fn add(&mut self, shadow: Shadow) -> Result<()> {
-        self.shadows.push(shadow);
+    pub fn add(&mut self, shadow: Alias) -> Result<()> {
+        self.aliases.push(shadow);
         self.save()?;
         Ok(())
     }
 
     pub fn remove(&mut self, original: &str) -> Result<()> {
         let position = self
-            .shadows
+            .aliases
             .iter()
             .position(|shadow| shadow.original() == original)
-            .ok_or_else(|| ShadowError::ShadowNotFound(original.to_string()))?;
+            .ok_or_else(|| ShadowError::AliasNotFound(original.to_string()))?;
 
-        self.shadows.remove(position);
+        self.aliases.remove(position);
         self.save()?;
         Ok(())
     }
