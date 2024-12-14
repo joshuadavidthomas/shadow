@@ -20,7 +20,7 @@ impl From<ExitCode> for i32 {
 impl From<ShadowError> for ExitCode {
     fn from(error: ShadowError) -> Self {
         match error {
-            ShadowError::ShadowNotFound(_) => ExitCode::CommandNotFound,
+            ShadowError::AliasNotFound(_) => ExitCode::CommandNotFound,
             ShadowError::CommandExecutionError(_) => ExitCode::CommandFailed,
             ShadowError::ConfigError(_) => ExitCode::ConfigError,
             ShadowError::InvalidReplacement(_) => ExitCode::InvalidArguments,
@@ -31,8 +31,8 @@ impl From<ShadowError> for ExitCode {
 
 #[derive(Error, Debug)]
 pub enum ShadowError {
-    #[error("No shadow found for command: {0}")]
-    ShadowNotFound(String),
+    #[error("No alias found for command: {0}")]
+    AliasNotFound(String),
     #[error("Command already shadowed: {0}")]
     DuplicateCommand(String),
     #[error("Failed to execute command: {0}")]
