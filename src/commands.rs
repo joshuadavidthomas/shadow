@@ -7,11 +7,11 @@ use std::path::PathBuf;
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// Add a new shadow
+    /// Add a new alias
     Add(Add),
-    /// Remove a shadow
+    /// Remove an alias
     Remove(Remove),
-    /// List all shadows
+    /// List all aliases
     List(List),
 }
 
@@ -27,7 +27,7 @@ impl Commands {
 
 #[derive(Clone, Debug, Parser)]
 pub struct Add {
-    /// Original command to shadow
+    /// Original command to alias
     original: String,
     /// Replacement command
     replacement: String,
@@ -39,7 +39,7 @@ pub struct Add {
 impl Add {
     pub fn execute(&self, mut config: Config) -> ExitCode {
         if config.shadows().contains(&self.original) {
-            eprintln!("Command already shadowed: {}", self.original);
+            eprintln!("Command already aliased: {}", self.original);
             return ExitCode::DuplicateCommand;
         }
 
@@ -58,7 +58,7 @@ impl Add {
 
         match config.add(shadow) {
             Ok(()) => {
-                println!("Added shadow: {}", self.original);
+                println!("Added alias: {}", self.original);
                 ExitCode::Success
             }
             Err(e) => {
@@ -71,7 +71,7 @@ impl Add {
 
 #[derive(Clone, Debug, Parser)]
 pub struct Remove {
-    /// Command to un-shadow
+    /// Command to un-alias
     original: String,
     /// Directory containing the symlink
     #[arg(long)]
@@ -95,7 +95,7 @@ impl Remove {
 
         match config.remove(&self.original) {
             Ok(()) => {
-                println!("Removed shadow: {}", self.original);
+                println!("Removed alias: {}", self.original);
                 ExitCode::Success
             }
             Err(e) => {
@@ -112,7 +112,7 @@ pub struct List;
 impl List {
     pub fn execute(&self, config: Config) -> ExitCode {
         match config.shadows().is_empty() {
-            true => println!("No shadows configured"),
+            true => println!("No aliases configured"),
             false => config
                 .shadows()
                 .iter()

@@ -16,7 +16,7 @@ fn main() {
     let program_name = Path::new(&args)
         .file_name()
         .and_then(|name| name.to_str())
-        .unwrap_or("shadow");
+        .unwrap_or("shdw");
     let config = match Config::load() {
         Ok(config) => config,
         Err(e) => {
@@ -26,7 +26,7 @@ fn main() {
     };
 
     let exit_code = match program_name {
-        "shadow" => Cli::execute(config),
+        "shdw" => Cli::execute(config),
         command => Cli::execute_shadowed(config, command),
     };
 

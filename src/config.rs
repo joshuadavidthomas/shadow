@@ -74,7 +74,7 @@ impl Config {
     fn config_path() -> PathBuf {
         dirs::config_dir()
             .expect("Could not find config directory")
-            .join("shadow/config.toml")
+            .join("shdw/config.toml")
     }
 }
 

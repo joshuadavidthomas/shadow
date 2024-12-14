@@ -1,6 +1,6 @@
-# shadow
+# shdw
 
-A CLI tool to manage your shell aliases through symlinks.
+A CLI tool to manage your shell aliases.
 
 ## Requirements
 
@@ -13,37 +13,37 @@ A CLI tool to manage your shell aliases through symlinks.
 Install directly from the repository:
 
 ```bash
-cargo install --git https://git.joshthomas.dev/josh/shadow
+cargo install --git https://github.com/joshuadavidthomas/shdw
 ```
 
 ## Usage
 
-### Adding a shadow
+### Adding an alias
 
 Create a new alias by shadowing an existing command:
 
 ```bash
-shadow add ls exa  # 'ls' will now execute 'exa'
+shdw add ls exa  # 'ls' will now execute 'exa'
 ```
 
 You can specify a custom installation directory:
 
 ```bash
-shadow add --bin-path ~/.local/bin ls exa
+shdw add --bin-path ~/.local/bin ls exa
 ```
 
-### Removing a shadow
+### Removing an alias
 
-Remove an existing shadow to restore the original command:
+Remove an existing alias to restore the original command:
 
 ```bash
-shadow remove ls
+shdw remove ls
 ```
 
-### Listing shadows
+### Listing aliases
 
-View all active shadows:
+View all active aliases:
 
 ```bash
-shadow list
+shdw list
 ```
