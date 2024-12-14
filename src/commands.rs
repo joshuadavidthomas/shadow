@@ -44,7 +44,13 @@ impl Add {
             return ExitCode::DuplicateCommand;
         }
 
-        if Command::new(&self.original).output().is_err() {
+        let command = &self
+            .original
+            .split_whitespace()
+            .next()
+            .expect("command should be provided");
+
+        if Command::new(command).output().is_err() {
             eprintln!("Command not found: {}", self.original);
             return ExitCode::CommandFailed;
         }
