@@ -12,10 +12,6 @@ use std::path::Path;
 use std::process::exit;
 
 fn main() {
-    // For debugging
-    println!("Args: {:?}", std::env::args().collect::<Vec<_>>());
-    println!("Program: {:?}", std::env::current_exe().unwrap());
-
     let args = env::args().next().unwrap();
     let program_name = Path::new(&args)
         .file_name()
