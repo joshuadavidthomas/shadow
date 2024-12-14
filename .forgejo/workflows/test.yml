@@ -29,10 +29,8 @@ jobs:
       - name: Install Protoc
         uses: https://git.joshthomas.dev/mirrors/setup-protoc@v3
 
-      - name: Install dependencies and build
-        run: |
-          uv sync --frozen
-          cargo build --verbose
+      - name: Build
+        run: cargo build --verbose
 
       - name: Run tests
         run: cargo test --verbose
