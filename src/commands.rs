@@ -8,10 +8,13 @@ use std::path::PathBuf;
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Add a new alias
+    #[command(visible_alias = "a")]
     Add(Add),
     /// Remove an alias
+    #[command(visible_aliases = ["rm", "delete"])]
     Remove(Remove),
     /// List all aliases
+    #[command(visible_alias = "ls")]
     List(List),
 }
 
