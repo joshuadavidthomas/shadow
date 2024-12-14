@@ -98,4 +98,3 @@ test:
 
     cd ..
     just test-cleanup
-
