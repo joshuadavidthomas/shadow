@@ -4,7 +4,6 @@ use crate::shadows::Shadow;
 use clap::Parser;
 use clap::Subcommand;
 use std::path::PathBuf;
-use std::process::Command;
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
