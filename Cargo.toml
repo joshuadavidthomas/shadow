@@ -1,0 +1,20 @@
+[package]
+name = "shadow-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive", "env"] }
+dirs = "5.0"
+figment = { version = "0.10", features = ["env", "toml"] }
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "2.0"
+toml = "0.8"
+
+[dev-dependencies]
+temp-env = "0.3"
+tempfile = "3.14"
+
+[[bin]]
+name = "shadow"
+path = "src/main.rs"
