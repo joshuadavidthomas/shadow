@@ -45,7 +45,7 @@ impl Cli {
     pub fn execute_shadowed(config: Config, command: &str) -> ExitCode {
         let args = ShadowedArgs::from_env();
         match config
-            .shadows()
+            .aliases()
             .find(command)
             .map(|shadow| shadow.execute(&args.args, args.is_raw))
         {
@@ -83,7 +83,7 @@ mod tests {
             args: ShadowedArgs,
         ) -> ExitCode {
             match config
-                .shadows()
+                .aliases()
                 .find(command)
                 .map(|shadow| shadow.execute(&args.args, args.is_raw))
             {

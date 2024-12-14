@@ -24,7 +24,7 @@ impl From<ShadowError> for ExitCode {
             ShadowError::CommandExecutionError(_) => ExitCode::CommandFailed,
             ShadowError::ConfigError(_) => ExitCode::ConfigError,
             ShadowError::InvalidReplacement(_) => ExitCode::InvalidArguments,
-            ShadowError::DuplicateCommand(_) => ExitCode::DuplicateCommand,
+            ShadowError::AliasExists(_) => ExitCode::DuplicateCommand,
         }
     }
 }
@@ -33,8 +33,8 @@ impl From<ShadowError> for ExitCode {
 pub enum ShadowError {
     #[error("No alias found for command: {0}")]
     AliasNotFound(String),
-    #[error("Command already shadowed: {0}")]
-    DuplicateCommand(String),
+    #[error("Alias already exists: {0}")]
+    AliasExists(String),
     #[error("Failed to execute command: {0}")]
     CommandExecutionError(#[from] std::io::Error),
     #[error("Failed to load config: {0}")]

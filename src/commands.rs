@@ -27,10 +27,13 @@ impl Commands {
 
 #[derive(Clone, Debug, Parser)]
 pub struct Add {
-    /// Original command to alias
-    original: String,
-    /// Replacement command
-    replacement: String,
+    /// Name of the alias
+    name: String,
+    /// Command to execute
+    command: String,
+    /// Description of the alias
+    #[arg(long)]
+    description: Option<String>,
     /// Directory to create symlink in
     #[arg(long)]
     bin_path: Option<PathBuf>,
@@ -38,27 +41,27 @@ pub struct Add {
 
 impl Add {
     pub fn execute(&self, mut config: Config) -> ExitCode {
-        if config.shadows().contains(&self.original) {
-            eprintln!("Command already aliased: {}", self.original);
-            return ExitCode::DuplicateCommand;
-        }
-
         let bin_path = match &self.bin_path {
             Some(p) if p == config.settings().bin_path() => None,
             Some(p) => Some(p.clone()),
             None => None,
         };
 
-        let shadow = Alias::new(self.original.clone(), self.replacement.clone(), bin_path);
+        let alias = Alias::new(
+            self.name.clone(),
+            self.command.clone(),
+            self.description.clone(),
+            bin_path,
+        );
 
-        if let Err(e) = shadow.create_symlink(config.settings()) {
+        if let Err(e) = alias.create_symlink(config.settings()) {
             eprintln!("{}", e);
             return e.into();
         }
 
-        match config.add(shadow) {
+        match config.add(alias) {
             Ok(()) => {
-                println!("Added alias: {}", self.original);
+                println!("Added alias: {}", self.name);
                 ExitCode::Success
             }
             Err(e) => {
@@ -71,8 +74,8 @@ impl Add {
 
 #[derive(Clone, Debug, Parser)]
 pub struct Remove {
-    /// Command to un-alias
-    original: String,
+    /// Name of the alias to remove
+    name: String,
     /// Directory containing the symlink
     #[arg(long)]
     bin_path: Option<PathBuf>,
@@ -80,22 +83,22 @@ pub struct Remove {
 
 impl Remove {
     pub fn execute(&self, mut config: Config) -> ExitCode {
-        let shadow = match config.shadows().find(&self.original) {
-            Ok(shadow) => shadow,
-            Err(e) => {
-                eprintln!("{}", e);
-                return e.into();
+        let alias = match config.aliases().get(&self.name) {
+            Some(alias) => alias,
+            None => {
+                eprintln!("Alias not found: {}", self.name);
+                return ExitCode::CommandNotFound;
             }
         };
 
-        if let Err(e) = shadow.remove_symlink(config.settings()) {
+        if let Err(e) = alias.remove_symlink(config.settings()) {
             eprintln!("{}", e);
             return e.into();
         }
 
-        match config.remove(&self.original) {
+        match config.remove(&self.name) {
             Ok(()) => {
-                println!("Removed alias: {}", self.original);
+                println!("Removed alias: {}", self.name);
                 ExitCode::Success
             }
             Err(e) => {
@@ -111,12 +114,15 @@ pub struct List;
 
 impl List {
     pub fn execute(&self, config: Config) -> ExitCode {
-        match config.shadows().is_empty() {
+        match config.aliases().is_empty() {
             true => println!("No aliases configured"),
-            false => config
-                .shadows()
-                .iter()
-                .for_each(|shadow| println!("{}", shadow)),
+            false => {
+                let mut aliases: Vec<_> = config.aliases().values().collect();
+                aliases.sort_by(|a, b| a.name().cmp(b.name()));
+                for alias in aliases {
+                    println!("{}", alias);
+                }
+            }
         }
         ExitCode::Success
     }
