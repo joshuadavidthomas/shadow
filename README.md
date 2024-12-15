@@ -1,19 +1,17 @@
-# shdw
+# shadow
 
-A CLI tool to manage your shell aliases.
+A CLI tool to manage shell aliases.
 
 ## Requirements
 
-- Rust toolchain
-  - The latest is recommended, but any recent version should hopefully work
-- Written with cross-platform compatibility in mind, aiming to support all major operating systems (Linux, macOS, Windows).
+`shdw` is written with cross-platform compatibility in mind, aiming to support all major operating systems (Linux, macOS, Windows). It's only requirement at the moment is the Rust toolchain for installation.
 
 ## Installation
 
 Install directly from the repository:
 
 ```bash
-cargo install --git https://github.com/joshuadavidthomas/shdw
+cargo install --git https://github.com/joshuadavidthomas/shadow
 ```
 
 ## Usage
