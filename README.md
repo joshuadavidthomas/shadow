@@ -4,7 +4,7 @@ A CLI tool to manage shell aliases.
 
 ## Requirements
 
-`shdw` is written with cross-platform compatibility in mind, aiming to support all major operating systems (Linux, macOS, Windows). It's only requirement at the moment is the Rust toolchain for installation.
+The only requirement at the moment is the Rust toolchain for installation.
 
 ## Installation
 
