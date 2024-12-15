@@ -2,31 +2,7 @@ use crate::aliases::Alias;
 use crate::config::Config;
 use crate::error::ExitCode;
 use clap::Parser;
-use clap::Subcommand;
 use std::path::PathBuf;
-
-#[derive(Subcommand, Debug)]
-pub enum Commands {
-    /// Add a new alias
-    #[command(visible_alias = "a")]
-    Add(Add),
-    /// Remove an alias
-    #[command(visible_aliases = ["rm", "delete"])]
-    Remove(Remove),
-    /// List all aliases
-    #[command(visible_alias = "ls")]
-    List(List),
-}
-
-impl Commands {
-    pub fn execute(&self, config: Config) -> ExitCode {
-        match self {
-            Commands::Add(cmd) => cmd.execute(config),
-            Commands::Remove(cmd) => cmd.execute(config),
-            Commands::List(cmd) => cmd.execute(config),
-        }
-    }
-}
 
 #[derive(Clone, Debug, Parser)]
 pub struct Add {
