@@ -108,12 +108,10 @@ mod tests {
 
         pub fn execute_with_args(config: Config, _temp_dir: TempDir, args: Vec<&str>) -> ExitCode {
             let cli = Self::try_parse_from(args).unwrap();
-            match &cli.command {
-                Some(cmd) => cmd.execute(config),
-                None => {
-                    println!("Use --help for usage information");
-                    ExitCode::InvalidArguments
-                }
+            match cli.command {
+                Commands::Add(cmd) => cmd.execute(config),
+                Commands::Remove(cmd) => cmd.execute(config),
+                Commands::List(cmd) => cmd.execute(config),
             }
         }
     }
