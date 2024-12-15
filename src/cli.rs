@@ -72,7 +72,6 @@ impl Cli {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::TempDir;
 
     impl ShadowedArgs {
         pub fn new(args: Vec<String>) -> Self {
@@ -83,36 +82,6 @@ mod tests {
                 .collect();
 
             Self { args, is_raw }
-        }
-    }
-
-    impl Cli {
-        pub fn execute_shadowed_with_args(
-            config: Config,
-            _temp_dir: TempDir, // Add this to keep it alive
-            command: &str,
-            args: ShadowedArgs,
-        ) -> ExitCode {
-            match config
-                .aliases()
-                .find(command)
-                .map(|shadow| shadow.execute(&args.args, args.is_raw))
-            {
-                Ok(code) => code,
-                Err(e) => {
-                    eprintln!("{}", e);
-                    e.into()
-                }
-            }
-        }
-
-        pub fn execute_with_args(config: Config, _temp_dir: TempDir, args: Vec<&str>) -> ExitCode {
-            let cli = Self::try_parse_from(args).unwrap();
-            match cli.command {
-                Commands::Add(cmd) => cmd.execute(config),
-                Commands::Remove(cmd) => cmd.execute(config),
-                Commands::List(cmd) => cmd.execute(config),
-            }
         }
     }
 
